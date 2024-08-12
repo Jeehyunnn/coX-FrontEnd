@@ -47,7 +47,7 @@ const GlobalStyle = createGlobalStyle`
 
 // Styled components 정의
 const AppContainer = styled.div`
-  max-width: 800px;
+  max-width: 1000px;
   width: 90vw;
   min-height: 600px;
   background: var(--theme-two);
@@ -72,16 +72,22 @@ const Panel = styled.div`
   line-height: 2;
   position: relative;
   overflow-x: hidden;
-  padding: 2rem;
+  padding: 1rem;
+  height: 100vh; /* 고정된 높이 설정 */
+  box-sizing: border-box; /* 패딩이 높이에 포함되도록 설정 */
 `;
 
 const ActionPanelContainer = styled(Panel)`
   background: var(--theme);
   color: var(--theme-two);
-  flex-grow: 1;
+  flex-grow: 1;W
   border-radius: inherit;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease; // 애니메이션 추가
+  opacity: ${({ transition }) => (transition ? 0 : 1)}; // 불투명도 조정
+  transform: ${({ transition }) => (transition ? 'translateX(20px)' : 'translateX(0)')}; // 슬라이드 효과
+
   @media (max-width: 650px) {
     border-radius: 0;
   }
@@ -92,6 +98,10 @@ const FormPanelContainer = styled(Panel)`
   border-radius: inherit;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease; // 애니메이션 추가
+  opacity: ${({ transition }) => (transition ? 0 : 1)}; // 불투명도 조정
+  transform: ${({ transition }) => (transition ? 'translateX(-20px)' : 'translateX(0)')}; // 슬라이드 효과
+
   @media (max-width: 650px) {
     border-radius: 0;
   }
@@ -148,7 +158,7 @@ const SocialLink = styled.a`
 `;
 
 const Input = styled.input`
-  margin: 0.5rem 0;
+  margin: 0.5rem 1px;
   width: 200px;
   padding: 1rem 0.75rem;
   background: var(--bg);
@@ -158,6 +168,13 @@ const Input = styled.input`
   &::placeholder {
     opacity: 0.8;
   }
+`;
+
+// Input을 감싸는 부모 컨테이너 스타일 정의
+const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: flex-start; /* 왼쪽 정렬 */
 `;
 
 const Link = styled.a`
@@ -177,13 +194,13 @@ const Link = styled.a`
 `;
 
 // 컴포넌트 정의
-const ActionPanel = ({ signIn, slide }) => {
+const ActionPanel = ({ signIn, slide, transition }) => {
   const heading = signIn ? 'Hello friend!' : 'Welcome back!';
   const paragraph = signIn ? 'Enter your personal details and start your journey with us' : 'To keep connected with us please login with your personal info';
   const button = signIn ? 'Sign up!' : 'Sign in!';
 
   return (
-    <ActionPanelContainer>
+    <ActionPanelContainer transition={transition}>
       <Heading>{heading}</Heading>
       <Paragraph>{paragraph}</Paragraph>
       <Button onClick={slide}>{button}</Button>
@@ -191,7 +208,7 @@ const ActionPanel = ({ signIn, slide }) => {
   );
 };
 
-const FormPanel = ({ signIn }) => {
+const FormPanel = ({ signIn, transition }) => {
   const heading = signIn ? 'Sign in' : 'Create account';
 
   const social = [
@@ -215,7 +232,7 @@ const FormPanel = ({ signIn }) => {
   const button = signIn ? 'Sign in' : 'Sign up';
 
   return (
-    <FormPanelContainer>
+    <FormPanelContainer transition={transition}>
       <Heading>{heading}</Heading>
       <SocialContainer>
         {social.map(({ href, icon }) => (
@@ -224,9 +241,11 @@ const FormPanel = ({ signIn }) => {
       </SocialContainer>
       <Paragraph>{paragraph}</Paragraph>
       <form>
+        <InputContainer>
         {inputs.map(({ type, placeholder }) => (
           <Input type={type} key={placeholder} placeholder={placeholder} />
         ))}
+        </InputContainer>
       </form>
       <Link href={link.href}>{link.text}</Link>
       <Button primary>{button}</Button>
@@ -255,8 +274,8 @@ const App = () => {
     <>
       <GlobalStyle />
       <AppContainer>
-        <FormPanel signIn={signIn} />
-        <ActionPanel signIn={signIn} slide={slide} />
+        <FormPanel signIn={signIn} transition={transition} />
+        <ActionPanel signIn={signIn} slide={slide} transition={transition} />
       </AppContainer>
     </>
   );
