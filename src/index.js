@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ScrollToTop from './components/Utils/ScrollToTop';
 import MemberLoad from './components/Utils/SessionStorage';
 import SingUp from './views/SignUp/SignUp';
+import Overview from './views/Main/Main';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,8 +16,7 @@ root.render(
     <ScrollToTop />
     <Routes>
       <Route path="/" element={<SingUp />}></Route>
-      {/* <Route path="/header" element={<HeaderLogoutBtn />}></Route>
-      <Route path="/footer" element={<Footer />}></Route> */}
+      <Route path="/overview" element={<Overview />} /> {/* Overview 컴포넌트 연결 */}
     </Routes>
   </BrowserRouter>
 );
