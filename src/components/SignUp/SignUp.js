@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
@@ -209,6 +210,94 @@ const ActionPanel = ({ signIn, slide, transition }) => {
 };
 
 const FormPanel = ({ signIn, transition }) => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData); //폼 데이터 로그 출력
+    try {
+      let response;
+
+      if (signIn) {
+        // 로그인 요청
+        const FormPanel = ({ signIn, transition }) => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData); //폼 데이터 로그 출력
+    try {
+      let response;
+
+      if (signIn) {
+        // 로그인 요청
+        const FormPanel = ({ signIn, transition }) => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData); //폼 데이터 로그 출력
+    try {
+      let response;
+      const { username, email, password } = formData;
+
+      if (signIn) {
+        // 로그인 요청, username을 제외한 email과 password만 전송
+        response = await axios.post('/api/auth/login', { email, password });
+      } else {
+        // 회원가입 요청
+        response = await axios.post('/api/auth/register', { username, email, password });
+      }
+
+      if (response.data.success) {
+        // 세션 토큰 저장
+        localStorage.setItem('sessionToken', response.data.token);
+        // 메인 페이지로 이동
+        window.location.href = '/MainDashboard';
+      } else {
+        alert(response.data.message || 'Error occurred!');
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error occurred!');
+    }
+  };
+
   const heading = signIn ? 'Sign in' : 'Create account';
 
   const social = [
@@ -220,12 +309,13 @@ const FormPanel = ({ signIn, transition }) => {
   const paragraph = 'Or use your email account';
 
   const inputs = [
-    { type: 'text', placeholder: 'Email' },
-    { type: 'password', placeholder: 'Password' }
+    { type: 'text', name: 'email', placeholder: 'Email' },
+    { type: 'password', name: 'password', placeholder: 'Password' }
   ];
 
+
   if (!signIn) {
-    inputs.unshift({ type: 'text', placeholder: 'Name' });
+    inputs.unshift({ type: 'text', name: 'username', placeholder: 'Name' });
   }
 
   const link = { href: '#', text: 'Forgot your password?' };
@@ -240,15 +330,139 @@ const FormPanel = ({ signIn, transition }) => {
         ))}
       </SocialContainer>
       <Paragraph>{paragraph}</Paragraph>
-      <form>
+      <form onSubmit={handleSubmit}>
         <InputContainer>
-        {inputs.map(({ type, placeholder }) => (
-          <Input type={type} key={placeholder} placeholder={placeholder} />
+        {inputs.map(({ type, name, placeholder }) => (
+          <Input type={type} name={name} key={placeholder} placeholder={placeholder} value={formData[name]} onChange={handleChange} />
         ))}
         </InputContainer>
+        <Button primary type="submit">{button}</Button>
       </form>
       <Link href={link.href}>{link.text}</Link>
-      <Button primary>{button}</Button>
+    </FormPanelContainer>
+  );
+};
+      } else {
+        // 회원가입 요청
+        response = await axios.post('/api/register', formData);
+      }
+
+      if (response.data.success) {
+        // 세션 토큰 저장
+        localStorage.setItem('sessionToken', response.data.token);
+        // 메인 페이지로 이동
+        window.location.href = '/MainDashboard';
+      } else {
+        alert(response.data.message || 'Error occurred!');
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error occurred!');
+    }
+  };
+
+  const heading = signIn ? 'Sign in' : 'Create account';
+
+  const social = [
+    { href: '#', icon: 'f' },
+    { href: '#', icon: 't' },
+    { href: '#', icon: 'in' }
+  ];
+
+  const paragraph = 'Or use your email account';
+
+  const inputs = [
+    { type: 'text', name: 'email', placeholder: 'Email' },
+    { type: 'password', name: 'password', placeholder: 'Password' }
+  ];
+
+
+  if (!signIn) {
+    inputs.unshift({ type: 'text', name: 'username', placeholder: 'Name' });
+  }
+
+  const link = { href: '#', text: 'Forgot your password?' };
+  const button = signIn ? 'Sign in' : 'Sign up';
+
+  return (
+    <FormPanelContainer transition={transition}>
+      <Heading>{heading}</Heading>
+      <SocialContainer>
+        {social.map(({ href, icon }) => (
+          <SocialLink href={href} key={icon}>{icon}</SocialLink>
+        ))}
+      </SocialContainer>
+      <Paragraph>{paragraph}</Paragraph>
+      <form onSubmit={handleSubmit}>
+        <InputContainer>
+        {inputs.map(({ type, name, placeholder }) => (
+          <Input type={type} name={name} key={placeholder} placeholder={placeholder} value={formData[name]} onChange={handleChange} />
+        ))}
+        </InputContainer>
+        <Button primary type="submit">{button}</Button>
+      </form>
+      <Link href={link.href}>{link.text}</Link>
+    </FormPanelContainer>
+  );
+};
+      } else {
+        // 회원가입 요청
+        response = await axios.post('/api/register', formData);
+      }
+
+      if (response.data.success) {
+        // 세션 토큰 저장
+        localStorage.setItem('sessionToken', response.data.token);
+        // 메인 페이지로 이동
+        window.location.href = '/MainDashboard';
+      } else {
+        alert(response.data.message || 'Error occurred!');
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error occurred!');
+    }
+  };
+
+  const heading = signIn ? 'Sign in' : 'Create account';
+
+  const social = [
+    { href: '#', icon: 'f' },
+    { href: '#', icon: 't' },
+    { href: '#', icon: 'in' }
+  ];
+
+  const paragraph = 'Or use your email account';
+
+  const inputs = [
+    { type: 'text', name: 'email', placeholder: 'Email' },
+    { type: 'password', name: 'password', placeholder: 'Password' }
+  ];
+
+
+  if (!signIn) {
+    inputs.unshift({ type: 'text', name: 'username', placeholder: 'Name' });
+  }
+
+  const link = { href: '#', text: 'Forgot your password?' };
+  const button = signIn ? 'Sign in' : 'Sign up';
+
+  return (
+    <FormPanelContainer transition={transition}>
+      <Heading>{heading}</Heading>
+      <SocialContainer>
+        {social.map(({ href, icon }) => (
+          <SocialLink href={href} key={icon}>{icon}</SocialLink>
+        ))}
+      </SocialContainer>
+      <Paragraph>{paragraph}</Paragraph>
+      <form onSubmit={handleSubmit}>
+        <InputContainer>
+        {inputs.map(({ type, name, placeholder }) => (
+          <Input type={type} name={name} key={placeholder} placeholder={placeholder} value={formData[name]} onChange={handleChange} />
+        ))}
+        </InputContainer>
+        <Button primary type="submit">{button}</Button>
+      </form>
+      <Link href={link.href}>{link.text}</Link>
     </FormPanelContainer>
   );
 };
